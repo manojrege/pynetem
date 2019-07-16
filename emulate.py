@@ -63,6 +63,16 @@ def apply_dnctl_rules(rule):
         print(e.output)
         return False
 
+def activate_pf():
+    try:
+        ACTIVATE_PF_COMMAND="pfctl -E"
+        output=subprocess.check_output(ACTIVATE_PF_COMMAND.split())
+        print(output)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(e.output)
+        return False
+
 
 
 
