@@ -1,0 +1,29 @@
+{% if delay is none -%}
+    {% if bandwidth is none -%}
+        {% if plr is none -%}
+None
+        {% else -%}
+pipe {{ number }} config plr {{ plr }}
+        {%- endif %}
+    {% else -%}
+        {%- if plr is none -%}
+pipe {{ number }} config bw {{ bandwidth }}Mbit/s
+        {% else -%}
+pipe {{ number }} config bw {{ bandwidth }}Mbit/s plr {{ plr }}
+        {%- endif %}
+    {%- endif %}
+{% else -%}
+    {% if bandwidth is none -%}
+            {% if plr is none -%}
+pipe {{ number }} config delay {{ delay }}ms
+            {% else -%}
+pipe {{ number }} config delay {{ delay }}ms plr {{ plr }}
+            {%- endif %}
+    {% else -%}
+            {% if plr is none -%}
+pipe {{ number }} config delay {{ delay }}ms bw {{ bandwidth }}Mbit/s
+            {% else -%}
+pipe {{ number }} config delay {{ delay }}ms bw {{ bandwidth }}Mbit/s plr {{ plr }}
+            {%- endif %}
+    {%- endif %}
+{%- endif %}

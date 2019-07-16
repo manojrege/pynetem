@@ -85,7 +85,7 @@ def generate_dnctl_rules(pipe_number, bandwidth=None, delay=None, plr=None):
         trim_blocks=True,
         lstrip_blocks=True)
     try:
-        template = j2_env.get_template('dnctl.conf.j2')
+        template = j2_env.get_template('dummynet.conf.j2')
         rules = template.render(
             number=pipe_number,
             bandwidth=bandwidth,
