@@ -53,6 +53,16 @@ def generate_dnctl_rules(pipe_number, bandwidth = None, delay = None, plr = None
         print(e)
         return
 
+def apply_dnctl_rules(rule):
+    try:
+        print("Applying dnctl rules")
+        output=subprocess.check_output("dnctl <<< echo\""+rule+"\"")
+        print(output)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(e.output)
+        return False
+
 
 
 
