@@ -22,7 +22,6 @@ def create_anchor(anchor_name):
         return False
 
 def configure_anchor(anchor_name, type):
-
     try:
         if type == 'simplex':
             CONFIGURE_ANCHOR = 'echo "dummynet in all pipe 1" | sudo pfctl -a '+anchor_name+' -f -'
@@ -73,21 +72,12 @@ def activate_pf():
         print(e.output)
         return False
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def flush_pf():
+    try:
+        FLUSH_PF_COMMAND="pfctl -F all"
+        output=subprocess.check_output(FLUSH_PF_COMMAND.split())
+        print(output)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(e)
+        return False
