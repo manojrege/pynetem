@@ -1,4 +1,5 @@
 import subprocess
+import jinja2
 
 def flush_dnctl():
     try:
@@ -35,10 +36,36 @@ def configure_anchor(anchor_name, type):
             print(output1)
             print(output2)
         else:
-            raise Exception("Option not found")
+            raise Exception(type + " option not found")
     except subprocess.CalledProcessError as e:
             print(e.output)
             return False
+
+def generate_dnctl_rules(pipe_number, bandwidth = None, delay = None, plr = None):
+    j2_env = jinja2.Environment(loader = jinja2.FileSystemLoader(['.']), trim_blocks=True, lstrip_blocks=True)
+    try:
+        template = j2_env.get_template('dnctl.conf.j2')
+        rules = template.render(number = pipe_number, bandwidth = bandwidth, delay = delay, plr = plr)
+        if 'None' in rules:
+            raise Exception("All Bandwidth, delay, and Packet Loss rate cannot be None")
+        return rules
+    except Exception as e:
+        print(e)
+        return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
