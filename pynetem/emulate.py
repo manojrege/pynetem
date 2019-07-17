@@ -3,8 +3,7 @@ import jinja2
 
 from functools import wraps
 
-
-def flush_dnctl():
+def flush_dummynet():
     """
     Resets dummynet to default config
     :return: True if success, False if fails
@@ -70,7 +69,7 @@ def configure_anchor(anchor_name, type):
         return False
 
 
-def generate_dnctl_rules(pipe_number, bandwidth=None, delay=None, plr=None):
+def generate_dummynet_rules(pipe_number, bandwidth=None, delay=None, plr=None):
     """
     Generates dummynet rules
     :param pipe_number:
@@ -100,14 +99,14 @@ def generate_dnctl_rules(pipe_number, bandwidth=None, delay=None, plr=None):
         return
 
 
-def apply_dnctl_rules(rule):
+def apply_dummynet_rules(rule):
     """
     Applies dummynet rules
     :param rule: Dummynet rule to be applied
     :return: True if successfully applied or False if failure
     """
     try:
-        print("Applying dnctl rules")
+        print("Applying dummynet rules")
         output = subprocess.check_output(
             "dnctl <<< echo \"" + rule + "\"", shell=True)
         print(output)
@@ -170,39 +169,40 @@ def emulate(
         def func_emulate(*args, **kwargs):
 
             # Set all rules
-            print("Flush all existing dnctl rules")
-            flush_dnctl()
+            print("Flush all existing dummynet rules")
+            flush_dummynet()
             print("Create a anchor pynetem")
             create_anchor("pynetem")
             print("Configuring anchor pynetem")
             configure_anchor("pynetem", type)
             print("Creating dummynet queue")
             if type == "incoming":
-                incoming = generate_dnctl_rules(
+                incoming = generate_dummynet_rules(
                     "1", bandwidth=bandwidth_in, delay=delay_in, plr=plr_in)
-                apply_dnctl_rules(incoming)
+                apply_dummynet_rules(incoming)
             elif type == "outgoing":
-                outgoing = generate_dnctl_rules(
+                outgoing = generate_dummynet_rules(
                     "1", bandwidth=bandwidth_out, delay=delay_out, plr=plr_out)
-                apply_dnctl_rules(outgoing)
+                apply_dummynet_rules(outgoing)
             elif type == "duplex":
-                incoming = generate_dnctl_rules(
+                incoming = generate_dummynet_rules(
                     "1", bandwidth=bandwidth_out, delay=delay_out, plr=plr_out)
-                apply_dnctl_rules(incoming)
-                outgoing = generate_dnctl_rules(
+                apply_dummynet_rules(incoming)
+                outgoing = generate_dummynet_rules(
                     "2", bandwidth=bandwidth_out, delay=delay_out, plr=plr_out)
-                apply_dnctl_rules(outgoing)
+                apply_dummynet_rules(outgoing)
             else:
                 raise Exception(
                     type + "Valid options include: incoming, outgoing, duplex")
+
             print("Activating Packet Filter")
             activate_pf()
 
             # Call the decorated function
             value = f(*args, **kwargs)
 
-            # Flush all the dnctl rules
-            flush_dnctl()
+            # Flush all the dummynet rules
+            flush_dummynet()
 
             # Flush all firewall rules
             flush_pf()
