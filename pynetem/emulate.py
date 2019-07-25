@@ -3,6 +3,8 @@ import jinja2
 
 from functools import wraps
 
+from pynetem.__init__ import get_data
+
 def flush_dummynet():
     """
     Resets dummynet to default config
@@ -84,7 +86,7 @@ def generate_dummynet_rules(pipe_number, bandwidth=None, delay=None, plr=None):
         trim_blocks=True,
         lstrip_blocks=True)
     try:
-        template = j2_env.get_template('dummynet.conf.j2')
+        template = j2_env.get_template(get_data('dummynet.conf.j2'))
         rules = template.render(
             number=pipe_number,
             bandwidth=bandwidth,
